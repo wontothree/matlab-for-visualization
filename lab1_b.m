@@ -1,4 +1,4 @@
-data = importdata('lab1_b.txt');
+data = importdata('lab1-b.txt');
 
 % 데이터 추출 및 변환
 frequencies = zeros(numel(data)-1, 1); % 헤더 행을 제외하기 위해 -1
@@ -38,15 +38,15 @@ figure;
 % 왼쪽 축 설정
 yyaxis left;
 h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
-ylabel('dB');
+ylabel('dB', 'FontSize', 12, 'FontWeight', 'bold');
 
 % 오른쪽 축 설정
 yyaxis right;
 h2 = semilogx(frequencies, phase_diff_deg, 'LineWidth', 1.5, 'Color', [0 0 0.5]);
-ylabel('deg');
+ylabel('deg', 'FontSize', 12, 'FontWeight', 'bold');
 
-xlabel('Hz');
-title('I(jw)/Vs(jw)');
+xlabel('Hz', 'FontSize', 12, 'FontWeight', 'bold');
+title('I(jw) / Vs(jw)');
 hold on;
 
 % 오른쪽 축의 범위를 90~-90으로 설정
