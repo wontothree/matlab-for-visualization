@@ -76,6 +76,6 @@ asymptote_frequency = frequencies(max_index);
 yyaxis left; % 왼쪽 축을 사용하여 추가
 hold on;
 text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f dB)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10); % 주석 추가
-
-legend([h1, h2, plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5)], {'Magnitude', 'Phase Difference', 'Resonance'}, 'FontSize', 9);
+plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
+legend([h1, h2], {'Magnitude', 'Phase Difference'}, 'FontSize', 9);
 
