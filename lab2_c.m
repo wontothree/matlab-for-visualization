@@ -117,8 +117,52 @@ ax2.YColor = [0 0 0]; % 검정색
 xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
 title('Frequency Response');
 
-% 레전드 표시
-legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');
 
 grid on;
 xlim([min([frequencies1; frequencies2; frequencies3]), 2e5]);
+
+% 절대값이 최대가 되는 주파수 찾기
+[max_value, max_index] = max(I_over_V_abs);
+asymptote_frequency = frequencies3(max_index);
+
+% 그래프에 점근선 추가
+yyaxis left; % 왼쪽 축을 사용하여 추가
+hold on;
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f dB)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10); % 주석 추가
+
+% 최대점 동그라미 표시
+plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
+
+% 공진점과 반공진점 찾기
+[resonance_peaks1, resonance_locs1] = findpeaks(O_over_I_dB1, frequencies1);
+[anti_peaks1, anti_locs1] = findpeaks(-O_over_I_dB1, frequencies1);
+
+[resonance_peaks2, resonance_locs2] = findpeaks(O_over_I_dB2, frequencies2);
+[anti_peaks2, anti_locs2] = findpeaks(-O_over_I_dB2, frequencies2);
+
+% 그래프에 공진점과 반공진점 표시
+plot(resonance_locs1, resonance_peaks1, 'ko', 'MarkerSize', 5); % 데이터 세트 1의 공진점 표시
+plot(anti_locs1, -anti_peaks1, 'ko', 'MarkerSize', 5); % 데이터 세트 1의 반공진점 표시
+
+plot(resonance_locs2, resonance_peaks2, 'ko', 'MarkerSize', 5); % 데이터 세트 2의 공진점 표시
+plot(anti_locs2, -anti_peaks2, 'ko', 'MarkerSize', 5); % 데이터 세트 2의 반공진점 표시
+
+% 공진점과 반공진점 좌표 출력
+for i = 1:numel(resonance_locs1)
+    text(resonance_locs1(i), resonance_peaks1(i), sprintf('(%.2e, %.2f dB)', resonance_locs1(i), resonance_peaks1(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+end
+
+for i = 1:numel(anti_locs1)
+    text(anti_locs1(i), -anti_peaks1(i), sprintf('(%.2e, %.2f dB)', anti_locs1(i), -anti_peaks1(i)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+end
+
+for i = 1:numel(resonance_locs2)
+    text(resonance_locs2(i), resonance_peaks2(i), sprintf('(%.2e, %.2f dB)', resonance_locs2(i), resonance_peaks2(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+end
+
+for i = 1:numel(anti_locs2)
+    text(anti_locs2(i), -anti_peaks2(i), sprintf('(%.2e, %.2f dB)', anti_locs2(i), -anti_peaks2(i)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+end
+
+% 레전드 표시
+legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');

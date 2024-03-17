@@ -23,7 +23,7 @@ for i = 2:numel(data)
     currents(i-1) = current_complex(1) + 1i * current_complex(2);
 end
 
-% V/I 계산 및 절댓값 적용
+% I/V 계산 및 절댓값 적용
 I_over_V_abs = abs(voltages ./ currents);
 I_over_V_dB = 20 * log10(I_over_V_abs); % 절댓값을 dB로 변환
 
@@ -34,21 +34,19 @@ phase_diff_deg = rad2deg(phase_diff);
 % 그래프 그리기 (로그 스케일)
 figure;
 
-
-
 % I/V의 크기 및 위상 차 그래프
 % 왼쪽 축 설정
 yyaxis left;
 h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
-ylabel('dB', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
 
 % 오른쪽 축 설정
 yyaxis right;
 h2 = semilogx(frequencies, phase_diff_deg, 'LineWidth', 1.5, 'Color', [0 0 0.5]);
-ylabel('deg', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Phase Difference [deg]', 'FontSize', 12, 'FontWeight', 'bold');
 
-xlabel('Hz', 'FontSize', 12, 'FontWeight', 'bold');
-title('Vs(jw) / I(jw)');
+xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
+title('Vs(jw) / I(jw) (RL = 0)');
 hold on;
 
 % 레전드 표시
@@ -69,3 +67,15 @@ ax.YColor = [0 0 0.5]; % 파란색
 
 grid on;
 xlim([min(frequencies), 2e5]);
+
+% 절대값이 최대가 되는 주파수 찾기
+[max_value, max_index] = max(I_over_V_abs);
+asymptote_frequency = frequencies(max_index);
+
+% 그래프에 점근선 추가
+yyaxis left; % 왼쪽 축을 사용하여 추가
+hold on;
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f dB)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10); % 주석 추가
+
+legend([h1, h2, plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5)], {'Magnitude', 'Phase Difference', 'Resonance'}, 'FontSize', 9);
+
