@@ -1,8 +1,18 @@
+# MATLAB for visualization
+
+## 1. 데이터 불러오기
+
+```m
 data1 = importdata('lab2-c.txt');
 data2 = importdata('lab2-c2.txt');
 data3 = importdata('lab2-b.txt');
+```
 
-% 데이터 추출 및 변환
+- txt 파일이 같은 경로에 있어야 한다.
+
+## 2. 각 열 저장
+
+```m
 frequencies1 = zeros(numel(data1)-2, 1);
 input_voltages1 = zeros(numel(data1)-2, 1);
 output_voltages1 = zeros(numel(data1)-2, 1);
@@ -11,10 +21,16 @@ frequencies2 = zeros(numel(data2)-2, 1);
 input_voltages2 = zeros(numel(data2)-2, 1);
 output_voltages2 = zeros(numel(data2)-2, 1);
 
-frequencies3 = zeros(numel(data3)-1, 1); % 헤더 행을 제외하기 위해 -1
+frequencies3 = zeros(numel(data3)-1, 1);
 voltages3 = zeros(numel(data3)-1, 1);
 currents3 = zeros(numel(data3)-1, 1);
+```
 
+- txt 파일에서 헤더 행의 수에 따라 제외할 수가 정해진다.
+
+## 3. 데이터 추출
+
+```m
 for i = 3:numel(data1)
     % 각 줄의 데이터를 탭을 기준으로 분할
     split_data = strsplit(data1{i}, '\t');
@@ -68,7 +84,11 @@ for i = 2:numel(data3)
     current_complex = sscanf(current_str, '%f,%f');
     currents3(i-1) = current_complex(1) + 1i * current_complex(2);
 end
+```
 
+##
+
+```m
 % O/I 계산 및 절댓값 적용
 O_over_I_abs1 = abs(output_voltages1 ./ input_voltages1);
 O_over_I_dB1 = 20 * log10(O_over_I_abs1); % 절댓값을 dB로 변환
@@ -89,14 +109,22 @@ phase_diff_deg2 = rad2deg(phase_diff2);
 
 phase_diff = angle(voltages3) - angle(currents3);
 phase_diff_deg = rad2deg(phase_diff);
+```
 
+## 시각화와 축 설정
+
+```m
 % 그래프 그리기 (로그 스케일)
 figure;
+grid on; % 그리드 설정
+title('Frequency Response');
 
-% 왼쪽 축 설정
+% x축 설정
+xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
+xlim([min([frequencies1; frequencies2; frequencies3]), 2e5]);
+
+% 왼쪽 축 설정 - 크기
 yyaxis left;
-
-% O/I의 크기 그래프
 h1 = semilogx(frequencies1, O_over_I_dB1, 'LineWidth', 1.5, 'Color', [0.5 0 0], 'LineStyle', '-');
 hold on;
 h2 = semilogx(frequencies2, O_over_I_dB2, 'LineWidth', 1.5, 'Color', [0 0 0.5], 'LineStyle', '-');
@@ -105,7 +133,7 @@ ylabel('Magnitude [dB] (solid line)', 'FontSize', 12, 'FontWeight', 'bold');
 ax1 = gca; % 왼쪽 축 가져오기
 ax1.YColor = [0 0 0]; % 검정색
 
-% 오른쪽 축 설정
+% 오른쪽 축 설정 - 위상차
 yyaxis right;
 h4 = semilogx(frequencies1, phase_diff_deg1, '--', 'LineWidth', 1.5, 'Color', [0.5 0 0]);
 h5 = semilogx(frequencies2, phase_diff_deg2, '--', 'LineWidth', 1.5, 'Color', [0 0 0.5]);
@@ -113,14 +141,11 @@ h6 = semilogx(frequencies3, phase_diff_deg, '--', 'LineWidth', 1.5, 'Color', [0 
 ylabel('Phase Difference [deg] (dashed line)', 'FontSize', 12, 'FontWeight', 'bold');
 ax2 = gca; % 오른쪽 축 가져오기
 ax2.YColor = [0 0 0]; % 검정색
+```
 
-xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
-title('Frequency Response');
+## Points
 
-
-grid on;
-xlim([min([frequencies1; frequencies2; frequencies3]), 2e5]);
-
+```m
 % 절대값이 최대가 되는 주파수 찾기
 [max_value, max_index] = max(I_over_V_abs);
 asymptote_frequency = frequencies3(max_index);
@@ -163,6 +188,11 @@ end
 for i = 1:numel(anti_locs2)
     text(anti_locs2(i), -anti_peaks2(i), sprintf('(%.2e, %.2f)', anti_locs2(i), -anti_peaks2(i)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
 end
+```
 
+## Legend
+
+```m
 % 레전드 표시
 legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');
+```
