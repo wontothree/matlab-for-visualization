@@ -86,7 +86,7 @@ for i = 2:numel(data3)
 end
 ```
 
-##
+## 4. 그래프
 
 ```m
 % O/I 계산 및 절댓값 적용
@@ -111,7 +111,7 @@ phase_diff = angle(voltages3) - angle(currents3);
 phase_diff_deg = rad2deg(phase_diff);
 ```
 
-## 시각화와 축 설정
+## 5. 시각화와 축 설정
 
 ```m
 % 그래프 그리기 (로그 스케일)
@@ -143,7 +143,7 @@ ax2 = gca; % 오른쪽 축 가져오기
 ax2.YColor = [0 0 0]; % 검정색
 ```
 
-## Points
+## 6. 특징점
 
 ```m
 % 절대값이 최대가 되는 주파수 찾기
@@ -190,7 +190,7 @@ for i = 1:numel(anti_locs2)
 end
 ```
 
-## Legend
+## 7. Legend
 
 ```m
 % 레전드 표시
