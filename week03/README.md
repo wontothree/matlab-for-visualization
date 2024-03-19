@@ -1,4 +1,4 @@
-# MATLAB for visualization
+# MATLAB for Visualization
 
 ## 1. 데이터 불러오기
 
