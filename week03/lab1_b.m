@@ -1,6 +1,7 @@
+% Data uploading
 data = importdata('lab1-b.txt');
 
-% 데이터 추출 및 변환
+% Data extraction
 frequencies = zeros(numel(data)-1, 1); % 헤더 행을 제외하기 위해 -1
 voltages = zeros(numel(data)-1, 1);
 currents = zeros(numel(data)-1, 1);
@@ -23,62 +24,110 @@ for i = 2:numel(data)
     currents(i-1) = current_complex(1) + 1i * current_complex(2);
 end
 
-% I/V 계산 및 절댓값 적용
+% I/V Graph calculation
 I_over_V_abs = abs(currents ./ voltages);
 I_over_V_dB = 20 * log10(I_over_V_abs); % 절댓값을 dB로 변환
 
-% 위상 차 계산 및 degree로 변환
+% Phase Difference calculation
 phase_diff = angle(currents) - angle(voltages);
 phase_diff_deg = rad2deg(phase_diff);
 
-% 그래프 그리기 (로그 스케일)
+% Visualization
 figure;
 
-% I/V의 크기 및 위상 차 그래프
-% 왼쪽 축 설정
+
+
+% Left y axis
 yyaxis left;
 h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
 ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
+ylim([-85, -45]);
 
-% 오른쪽 축 설정
+
+% right y axis
 yyaxis right;
 h2 = semilogx(frequencies, phase_diff_deg, 'LineWidth', 1.5, 'Color', [0 0 0.5]);
 ylabel('Phase Difference [deg]', 'FontSize', 12, 'FontWeight', 'bold');
-
-xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
-title('I(jw) / Vs(jw) (RL = INF)');
-hold on;
-
-% 오른쪽 축의 범위를 90~-90으로 설정
 ylim([-90, 90]);
-
-% 오른쪽 축 눈금을 30도 단위로 설정
 yticks(-90:30:90);
 
-% 축 스타일 설정
+
+
+% X axis
+xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
+title('I(jw) / Vs(jw) (RL = INF(1TOhm))');
+hold on;
+
 ax = gca; % 현재 축 가져오기
 ax.FontSize = 12; % 눈금 및 눈금 레이블의 글꼴 크기 설정
 ax.XColor = [0 0 0]; % x 축 색상 설정
 
-% 왼쪽 축 색상 설정
-yyaxis left;
-ax.YColor = [0.5 0 0]; % 빨간색
 
-% 오른쪽 축 색상 설정
-yyaxis right;
-ax.YColor = [0 0 0.5]; % 파란색
 
 grid on;
 xlim([min(frequencies), 2e5]);
 
-% 절대값이 최대가 되는 주파수 찾기
+
+yyaxis left;
+ax.YColor = [0.5 0 0];
+
+yyaxis right;
+ax.YColor = [0 0 0.5];
+
+
+
+
+
+% MAX
 [max_value, max_index] = max(I_over_V_abs);
 asymptote_frequency = frequencies(max_index);
 
-% 그래프에 점근선 추가
-yyaxis left; % 왼쪽 축을 사용하여 추가
+yyaxis left;
 hold on;
-text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10); % 주석 추가
-
 plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+
+
+
+% 점근선
+ref_line = -50.97 * ones(size(frequencies));
+plot(frequencies, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1);
+
+ref_dB = -50.97;
+diff1 = abs(I_over_V_dB - ref_dB);
+[min_diff1, min_index1] = min(diff1);
+intersection_1 = frequencies(min_index1);
+
+diff1(min_index1) = NaN;
+[min_diff1, min_index1] = min(diff1);
+intersection_2 = frequencies(min_index1);
+
+plot(intersection_1, I_over_V_dB(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 첫 번째 교차점
+plot(intersection_2, I_over_V_dB(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 두 번째 교차점
+text(intersection_1, I_over_V_dB(min_index1), sprintf('(%.2f, %.2f)', intersection_1, I_over_V_dB(min_index1)), 'VerticalAlignment', 'cap', 'HorizontalAlignment', 'left', 'FontSize', 10);
+text(intersection_2, I_over_V_dB(min_index1), sprintf('(%.2f, %.2f)', intersection_2, I_over_V_dB(min_index1)), 'VerticalAlignment', 'cap', 'HorizontalAlignment', 'right', 'FontSize', 10);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% Legend
 legend([h1, h2], {'Magnitude', 'Phase Difference'}, 'FontSize', 9);
+
+
+
+

@@ -11,7 +11,7 @@ frequencies2 = zeros(numel(data2)-2, 1);
 input_voltages2 = zeros(numel(data2)-2, 1);
 output_voltages2 = zeros(numel(data2)-2, 1);
 
-frequencies3 = zeros(numel(data3)-1, 1); % 헤더 행을 제외하기 위해 -1
+frequencies3 = zeros(numel(data3)-1, 1);
 voltages3 = zeros(numel(data3)-1, 1);
 currents3 = zeros(numel(data3)-1, 1);
 
@@ -90,36 +90,38 @@ phase_diff_deg2 = rad2deg(phase_diff2);
 phase_diff = angle(voltages3) - angle(currents3);
 phase_diff_deg = rad2deg(phase_diff);
 
+
 % 그래프 그리기 (로그 스케일)
 figure;
+grid on; 
+title('Frequency Response with Resistance RL Variation');
 
-% 왼쪽 축 설정
+% x축 설정
+xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
+xlim([min([frequencies1; frequencies2; frequencies3]), 2e5]);
+
+% 왼쪽 축 설정 - 크기
 yyaxis left;
-
-% O/I의 크기 그래프
 h1 = semilogx(frequencies1, O_over_I_dB1, 'LineWidth', 1.5, 'Color', [0.5 0 0], 'LineStyle', '-');
 hold on;
 h2 = semilogx(frequencies2, O_over_I_dB2, 'LineWidth', 1.5, 'Color', [0 0 0.5], 'LineStyle', '-');
 h3 = semilogx(frequencies3, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0 0.5 0], 'LineStyle', '-');
-ylabel('Magnitude [dB] (solid line)', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
 ax1 = gca; % 왼쪽 축 가져오기
 ax1.YColor = [0 0 0]; % 검정색
 
-% 오른쪽 축 설정
+% 오른쪽 축 설정 - 위상차
 yyaxis right;
 h4 = semilogx(frequencies1, phase_diff_deg1, '--', 'LineWidth', 1.5, 'Color', [0.5 0 0]);
 h5 = semilogx(frequencies2, phase_diff_deg2, '--', 'LineWidth', 1.5, 'Color', [0 0 0.5]);
 h6 = semilogx(frequencies3, phase_diff_deg, '--', 'LineWidth', 1.5, 'Color', [0 0.5 0]);
-ylabel('Phase Difference [deg] (dashed line)', 'FontSize', 12, 'FontWeight', 'bold');
-ax2 = gca; % 오른쪽 축 가져오기
-ax2.YColor = [0 0 0]; % 검정색
+ylabel('Phase Difference [deg]', 'FontSize', 12, 'FontWeight', 'bold');
+ax2 = gca;
+ax2.YColor = [0 0 0];
+ylim([-180, 180]);
+yticks(-180:45:180);
 
-xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
-title('Frequency Response');
 
-
-grid on;
-xlim([min([frequencies1; frequencies2; frequencies3]), 2e5]);
 
 % 절대값이 최대가 되는 주파수 찾기
 [max_value, max_index] = max(I_over_V_abs);
@@ -128,7 +130,7 @@ asymptote_frequency = frequencies3(max_index);
 % 그래프에 점근선 추가
 yyaxis left; % 왼쪽 축을 사용하여 추가
 hold on;
-text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10); % 주석 추가
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2f, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', 'FontSize', 10); % 주석 추가
 
 % 최대점 동그라미 표시
 plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
@@ -149,20 +151,30 @@ plot(anti_locs2, -anti_peaks2, 'ko', 'MarkerSize', 5); % 데이터 세트 2의 �
 
 % 공진점과 반공진점 좌표 출력
 for i = 1:numel(resonance_locs1)
-    text(resonance_locs1(i), resonance_peaks1(i), sprintf('(%.2e, %.2f)', resonance_locs1(i), resonance_peaks1(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+    text(resonance_locs1(i), resonance_peaks1(i), sprintf('(%.2f, %.2f)', resonance_locs1(i), resonance_peaks1(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 end
 
 for i = 1:numel(anti_locs1)
-    text(anti_locs1(i), -anti_peaks1(i), sprintf('(%.2e, %.2f)', anti_locs1(i), -anti_peaks1(i)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+    text(anti_locs1(i), -anti_peaks1(i), sprintf('(%.2f, %.2f)', anti_locs1(i), -anti_peaks1(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 end
 
 for i = 1:numel(resonance_locs2)
-    text(resonance_locs2(i), resonance_peaks2(i), sprintf('(%.2e, %.2f)', resonance_locs2(i), resonance_peaks2(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+    text(resonance_locs2(i), resonance_peaks2(i), sprintf('(%.2f, %.2f)', resonance_locs2(i), resonance_peaks2(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 end
 
 for i = 1:numel(anti_locs2)
-    text(anti_locs2(i), -anti_peaks2(i), sprintf('(%.2e, %.2f)', anti_locs2(i), -anti_peaks2(i)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+    text(anti_locs2(i), -anti_peaks2(i), sprintf('(%.2f, %.2f)', anti_locs2(i), -anti_peaks2(i)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 end
 
+
+
+
+
+
+
+
+
+
 % 레전드 표시
-legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');
+legend([h1, h2, h3, h4, h5, h6], {'Vo/Vs Magnitude(RL=50Ohm)', 'Vo/Vs Magnitude(RL=2kOhm)', 'Vs/I Magnitude(RL=0)', 'Vo/Vs Phase Difference(RL=50Ohm)', 'Vo/Vs Phase Difference(RL=2kOhm)', 'Phase Difference Vs/I(RL=0)'}, 'Location', 'northwest', 'FontSize', 6);
+

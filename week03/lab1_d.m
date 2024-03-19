@@ -66,7 +66,7 @@ ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold'); % y 축의 글�
 title('Vo(jw) / Vs(jw)');
 grid on;
 xlim([min([frequencies1; frequencies2]), 2e5]);
-ylim([-50, max([O_over_I_dB1; O_over_I_dB2])]);
+ylim([-50, 0]);
 
 
 % 축 스타일 설정
@@ -75,6 +75,8 @@ ax.FontSize = 12; % 눈금 및 눈금 레이블의 글꼴 크기 설정
 ax.XColor = [0 0 0]; % x 축 색상 설정
 ax.YColor = [0 0 0]; % y 축 색상 설정
 
+
+
 % 절대값이 최대가 되는 주파수 찾기
 [max_value1, max_index1] = max(O_over_I_abs1);
 asymptote_frequency1 = frequencies1(max_index1);
@@ -82,64 +84,63 @@ asymptote_frequency1 = frequencies1(max_index1);
 [max_value2, max_index2] = max(O_over_I_abs2);
 asymptote_frequency2 = frequencies2(max_index2);
 
+plot(asymptote_frequency1, 20*log10(max_value1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k');
+text(asymptote_frequency1, 20*log10(max_value1)-2, sprintf('(%.2f, %.2f)', asymptote_frequency1, 20*log10(max_value1)), 'VerticalAlignment', 'baseline', 'HorizontalAlignment', 'center', 'FontSize', 8);
 
-% -3dB (1/sqrt(2)) 점근선 추가
+
+
+
+
+
+% 점근선
 ref_line = -3 * ones(size(frequencies1));
 plot(frequencies1, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1); % RL = 50 Ohm에 해당하는 선
 plot(frequencies2, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1); % RL = INF (1T Ohm)에 해당하는 선
 
+ref_dB = -3.01;
 
-
-% dB 값이 20log(1/sqrt(2))인 점의 좌표 찾기
-ref_dB = 20 * log10(1/sqrt(2)); % 20log(1/sqrt(2)) 값 계산
-
-% 각 그래프의 데이터에서 ref_dB 값과의 차이 계산
 diff1 = abs(O_over_I_dB1 - ref_dB);
 diff2 = abs(O_over_I_dB2 - ref_dB);
 
-% 차이가 최소가 되는 인덱스 찾기 (첫 번째 교차점)
 [min_diff1, min_index1] = min(diff1);
 [min_diff2, min_index2] = min(diff2);
 
-% 첫 번째 교차점 좌표
 intersection_freq1_1 = frequencies1(min_index1);
 intersection_freq2_1 = frequencies2(min_index2);
 
+diff1(min_index1) = NaN;
+diff2(min_index2) = NaN;
 
-
-% 두 번째 교차점 찾기
-% 첫 번째 교차점 이후의 데이터에서 ref_dB 값과의 차이 계산
-diff1(min_index1) = NaN; % 첫 번째 교차점 이후의 데이터 제외
-diff2(min_index2) = NaN; % 첫 번째 교차점 이후의 데이터 제외
-
-% 차이가 최소가 되는 인덱스 찾기 (두 번째 교차점)
 [min_diff1, min_index1] = min(diff1);
 [min_diff2, min_index2] = min(diff2);
 
-% 두 번째 교차점 좌표
 intersection_freq1_2 = frequencies1(min_index1);
 intersection_freq2_2 = frequencies2(min_index2);
 
+plot(intersection_freq1_1, O_over_I_dB1(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 첫 번째 교차점
+plot(intersection_freq2_1, O_over_I_dB2(min_index2), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 첫 번째 교차점
+plot(intersection_freq1_2, O_over_I_dB1(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 두 번째 교차점
+plot(intersection_freq2_2, O_over_I_dB2(min_index2), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); % 두 번째 교차점
+
+text(intersection_freq1_1, O_over_I_dB1(min_index1), sprintf('(%.2f, %.2f)', intersection_freq1_1, O_over_I_dB1(min_index1)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 8);
+text(intersection_freq1_2, O_over_I_dB1(min_index1), sprintf('(%.2f, %.2f)', intersection_freq1_2, O_over_I_dB1(min_index1)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', 'FontSize', 8);
+text(intersection_freq2_1, O_over_I_dB2(min_index2), sprintf('(%.2f, %.2f)', intersection_freq2_1, O_over_I_dB2(min_index2)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 8);
+text(intersection_freq2_2, O_over_I_dB2(min_index2), sprintf('(%.2f, %.2f)', intersection_freq2_2, O_over_I_dB2(min_index2)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'left', 'FontSize', 8);
 
 
 
-% 그래프에 최대점 표시
-plot(asymptote_frequency1, 20*log10(max_value1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % 최댓값 표시
-text(asymptote_frequency1, 20*log10(max_value1)-2, sprintf('(%.2e, %.2f)', asymptote_frequency1, 20*log10(max_value1)), 'VerticalAlignment', 'baseline', 'HorizontalAlignment', 'center', 'FontSize', 8); % 주석 추가
 
-plot(intersection_freq1_1, O_over_I_dB1(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % 첫 번째 교차점
-plot(intersection_freq2_1, O_over_I_dB2(min_index2), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % 첫 번째 교차점
-plot(intersection_freq1_2, O_over_I_dB1(min_index1), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % 두 번째 교차점
-plot(intersection_freq2_2, O_over_I_dB2(min_index2), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % 두 번째 교차점
 
-% 각 점 주변에 텍스트 라벨링 추가
-text(intersection_freq1_1, O_over_I_dB1(min_index1), sprintf('(%.2e, %.2f)', intersection_freq1_1, O_over_I_dB1(min_index1)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 8);
-text(intersection_freq1_2, O_over_I_dB1(min_index1), sprintf('(%.2e, %.2f)', intersection_freq1_2, O_over_I_dB1(min_index1)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', 'FontSize', 8);
-text(intersection_freq2_1, O_over_I_dB2(min_index2), sprintf('(%.2e, %.2f)', intersection_freq2_1, O_over_I_dB2(min_index2)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 8);
-text(intersection_freq2_2, O_over_I_dB2(min_index2), sprintf('(%.2e, %.2f)', intersection_freq2_2, O_over_I_dB2(min_index2)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'left', 'FontSize', 8);
+
+
+
+
+
+
+
 
 
 
 % 레전드 표시
-legend([h1, h2], {'RL = 50 Ohm', 'RL = INF (1T Ohm)'}, 'FontSize', 8, 'Location', 'southeast');
+legend([h1, h2], {'RL = 50Ohm', 'RL = INF(1TOhm)'}, 'FontSize', 8, 'Location', 'southeast');
 
