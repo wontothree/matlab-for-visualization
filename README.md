@@ -4,23 +4,11 @@
 
 ```m
 data1 = importdata('lab2-c.txt');
-```
 
-- txt 파일이 같은 경로에 있어야 한다.
-
-## 2. 각 열 저장
-
-```m
 frequencies1 = zeros(numel(data1)-2, 1);
 input_voltages1 = zeros(numel(data1)-2, 1);
 output_voltages1 = zeros(numel(data1)-2, 1);
-```
 
-- txt 파일에서 헤더 행의 수에 따라 제외할 수가 정해진다.
-
-## 3. 데이터 추출
-
-```m
 for i = 3:numel(data1)
     % 각 줄의 데이터를 탭을 기준으로 분할
     split_data = strsplit(data1{i}, '\t');
@@ -40,7 +28,7 @@ for i = 3:numel(data1)
 end
 ```
 
-## 4. 그래프
+## 2. 그래프
 
 ```m
 % O/I
@@ -52,10 +40,9 @@ phase_diff1 = angle(output_voltages1) - angle(input_voltages1);
 phase_diff_deg1 = rad2deg(phase_diff1);
 ```
 
-## 5. 시각화와 축 설정
+## 3. 시각화와 축 설정
 
 ```m
-% 그래프 그리기 (로그 스케일)
 figure;
 grid on; % 그리드 설정
 title('Frequency Response');
@@ -87,15 +74,13 @@ ax2.YColor = [0 0 0]; % 검정색
 
 
 
-% 그래프 그리기 (로그 스케일)
+% 2
 figure;
 
-% I/V의 크기 및 위상 차 그래프
 % 왼쪽 축 설정
 yyaxis left;
 h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
 ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
-
 
 % 오른쪽 축 설정
 yyaxis right;
@@ -106,9 +91,6 @@ xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
 title('Vs(jw) / I(jw) (RL = 0)');
 grid on;
 hold on;
-
-
-
 
 % 축
 ax = gca;
@@ -127,17 +109,7 @@ ylim([-180, 180]);
 yticks(-180:45:180);
 ```
 
-## 7. Legend
-
-- Fontsize
-- Location
-
-```m
-% Legend
-legend([h1, h2], {'Magnitude', 'Phase Difference'}, 'FontSize', 9, 'Location', 'southeast');
-```
-
-## 8. 점근선
+## 4. 점근선
 
 linear scale
 
@@ -170,7 +142,7 @@ text(intersection_1, O_over_I_dB(min_index), sprintf('(%.2f, %.2f)', intersectio
 text(intersection_2, O_over_I_dB(min_index), sprintf('(%.2f, %.2f)', intersection_2, O_over_I_dB(min_index)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', 'FontSize', 10);
 ```
 
-## 9. 최대점
+## 5. Max
 
 ```m
 % MAX
@@ -182,16 +154,21 @@ hold on;
 text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2f, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
 plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
 
-
-
-% 절대값이 최대가 되는 주파수 찾기
 [max_value, max_index] = max(I_over_V_abs);
 asymptote_frequency = frequencies(max_index);
 
-
-% 그래프에 점근선 추가
 yyaxis left; % 왼쪽 축을 사용하여 추가
 hold on;
 text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2f, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
+```
+
+## 6. Legend
+
+- Fontsize
+- Location
+
+```m
+% Legend
+legend([h1, h2], {'Magnitude', 'Phase Difference'}, 'FontSize', 9, 'Location', 'southeast');
 ```
