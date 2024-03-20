@@ -54,6 +54,13 @@ end
 O_over_I_abs1 = abs(output_voltages1 ./ input_voltages1);
 O_over_I_abs2 = abs(output_voltages2 ./ input_voltages2);
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
 % Visualization
 figure;
 
@@ -174,3 +181,7 @@ text(freq2_at_target2, output_voltages2(index2), ['(', num2str(freq2_at_target2)
 
 % Legend
 legend([h1, h2], {'RL = 50Ohm', 'RL = 2kOhm'}, 'Location', 'southeast');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
