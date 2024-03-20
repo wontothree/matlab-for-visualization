@@ -192,7 +192,10 @@ end
 
 ## 7. Legend
 
+- Fontsize : 9
+- Location : northwest
+
 ```m
-% 레전드 표시
-legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');
+% Legend
+legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'FontSize', 9, 'Location', 'northwest');
 ```
