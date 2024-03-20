@@ -141,6 +141,51 @@ h6 = semilogx(frequencies3, phase_diff_deg, '--', 'LineWidth', 1.5, 'Color', [0 
 ylabel('Phase Difference [deg] (dashed line)', 'FontSize', 12, 'FontWeight', 'bold');
 ax2 = gca; % 오른쪽 축 가져오기
 ax2.YColor = [0 0 0]; % 검정색
+
+
+
+
+
+% 그래프 그리기 (로그 스케일)
+figure;
+
+% I/V의 크기 및 위상 차 그래프
+% 왼쪽 축 설정
+yyaxis left;
+h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
+ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
+
+
+% 오른쪽 축 설정
+yyaxis right;
+h2 = semilogx(frequencies, phase_diff_deg, 'LineWidth', 1.5, 'Color', [0 0 0.5]);
+ylabel('Phase Difference [deg]', 'FontSize', 12, 'FontWeight', 'bold');
+
+xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
+title('Vs(jw) / I(jw) (RL = 0)');
+grid on;
+hold on;
+
+
+
+
+% 축
+ax = gca;
+ax.FontSize = 12;
+ax.XColor = [0 0 0];
+xlim([min(frequencies), 2e5]);
+
+% 왼쪽 축
+yyaxis left;
+ax.YColor = [0.5 0 0];
+
+% 오른쪽 축
+yyaxis right;
+ax.YColor = [0 0 0.5];
+ylim([-180, 180]);
+yticks(-180:45:180);
+
+
 ```
 
 ## 6. 특징점
@@ -192,10 +237,70 @@ end
 
 ## 7. Legend
 
-- Fontsize : 9
-- Location : northwest
+```m
+% 레전드 표시
+legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'Location', 'northwest');
+
+legend([h1, h2], {'Magnitude', 'Phase Difference'}, 'FontSize', 9, 'Location', 'southeast');
+
+legend([h1, h2, h3, h4, h5, h6], {'Vo/Vs Magnitude(RL=50Ohm)', 'Vo/Vs Magnitude(RL=2kOhm)', 'Vs/I Magnitude(RL=0)', 'Vo/Vs Phase Difference(RL=50Ohm)', 'Vo/Vs Phase Difference(RL=2kOhm)', 'Phase Difference Vs/I(RL=0)'}, 'Location', 'northwest', 'FontSize', 5);
+```
+
+## 8. 점근선
+
+linear scale
 
 ```m
-% Legend
-legend([h1, h2, h3], {'Vo/Vs (RL=50Ohm)', 'Vo/Vs (RL=2kOhm)', 'Vs/I (RL=0)'}, 'FontSize', 9, 'Location', 'northwest');
+% Plot asymptotic line for y = 0.41
+ref_line = 0.41 * ones(size(frequencies1));
+plot(frequencies1, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1); % RL = 50 Ohm
+plot(frequencies2, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1); % RL = 2k Ohm
+```
+
+dB scale
+
+```m
+% 점근선
+ref_line = -3.01 * ones(size(frequencies));
+plot(frequencies, ref_line, '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 1);
+
+ref_dB = -3.01;
+diff1 = abs(O_over_I_dB - ref_dB);
+[min_diff1, min_index] = min(diff1);
+intersection_1 = frequencies(min_index);
+
+diff1(min_index) = NaN;
+[min_diff1, min_index] = min(diff1);
+intersection_2 = frequencies(min_index);
+
+plot(intersection_1, O_over_I_dB(min_index), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k');
+plot(intersection_2, O_over_I_dB(min_index), 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'k'); 
+text(intersection_1, O_over_I_dB(min_index), sprintf('(%.2f, %.2f)', intersection_1, O_over_I_dB(min_index)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+text(intersection_2, O_over_I_dB(min_index), sprintf('(%.2f, %.2f)', intersection_2, O_over_I_dB(min_index)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'left', 'FontSize', 10);
+```
+
+## 최대점
+
+```m
+% MAX
+[max_value, max_index] = max(O_over_I_abs);
+asymptote_frequency = frequencies(max_index);
+
+yyaxis left;
+hold on;
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2f, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'top', 'HorizontalAlignment', 'right', 'FontSize', 10);
+plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
+
+
+
+% 절대값이 최대가 되는 주파수 찾기
+[max_value, max_index] = max(I_over_V_abs);
+asymptote_frequency = frequencies(max_index);
+
+
+% 그래프에 점근선 추가
+yyaxis left; % 왼쪽 축을 사용하여 추가
+hold on;
+text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2f, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
+plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
 ```
