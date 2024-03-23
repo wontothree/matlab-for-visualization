@@ -2,6 +2,8 @@
 
 [MATLAB-데이터 시각화](https://kr.mathworks.com/discovery/data-visualization.html)
 
+<img src="./img/lab2-d-graph.png" />
+
 ## 1. 데이터 불러오기
 
 ```m
