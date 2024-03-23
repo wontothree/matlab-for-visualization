@@ -1,6 +1,6 @@
 # MATLAB for Visualization
 
-[MATLAB-데이터 시각화][https://kr.mathworks.com/discovery/data-visualization.html]
+[MATLAB-데이터 시각화](https://kr.mathworks.com/discovery/data-visualization.html)
 
 ## 1. 데이터 불러오기
 
