@@ -35,21 +35,16 @@ phase_diff_deg = rad2deg(phase_diff);
 % Visualization
 figure;
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
+
 % Left y axis
 yyaxis left;
 h1 = semilogx(frequencies, I_over_V_dB, 'LineWidth', 1.5, 'Color', [0.5 0 0]);
 ylabel('Magnitude [dB]', 'FontSize', 12, 'FontWeight', 'bold');
 ylim([-85, -45]);
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
 % right y axis
 yyaxis right;
 h2 = semilogx(frequencies, phase_diff_deg, 'LineWidth', 1.5, 'Color', [0 0 0.5]);
@@ -58,10 +53,6 @@ ylim([-90, 90]);
 yticks(-90:30:90);
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
 % X axis
 xlabel('Frequency [Hz]', 'FontSize', 12, 'FontWeight', 'bold');
 title('I(jw) / Vs(jw) (RL = INF(1TOhm))');
@@ -71,7 +62,7 @@ ax = gca; % 현재 축 가져오기
 ax.FontSize = 12; % 눈금 및 눈금 레이블의 글꼴 크기 설정
 ax.XColor = [0 0 0]; % x 축 색상 설정
 
-<<<<<<< HEAD
+
 
 
 grid on;
@@ -81,13 +72,13 @@ xlim([min(frequencies), 2e5]);
 yyaxis left;
 ax.YColor = [0.5 0 0];
 
-=======
+
 grid on;
 xlim([min(frequencies), 2e5]);
 
 yyaxis left;
 ax.YColor = [0.5 0 0];
->>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
+
 yyaxis right;
 ax.YColor = [0 0 0.5];
 
@@ -95,18 +86,14 @@ ax.YColor = [0 0 0.5];
 
 
 
-<<<<<<< HEAD
-=======
 
-
->>>>>>> 23423ed57ba31acb98392ba85d742d37993e4b5b
 % MAX
 [max_value, max_index] = max(I_over_V_abs);
 asymptote_frequency = frequencies(max_index);
 
 yyaxis left;
 hold on;
-<<<<<<< HEAD
+
 plot(asymptote_frequency, 20*log10(max_value), 'ko', 'MarkerSize', 5);
 text(asymptote_frequency, 20*log10(max_value), sprintf('(%.2e, %.2f)', asymptote_frequency, 20*log10(max_value)), 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'right', 'FontSize', 10);
 
